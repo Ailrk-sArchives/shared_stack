@@ -12,18 +12,19 @@ void *work(void *s) {
     int value = ss_pop(p);
     printf("[worker thread %lu]: get value %d, stack size %lu \n", tid, value,
            p->size);
-    usleep(1000000);
+    usleep(100000);
   }
   pthread_exit(NULL);
 }
 
-void *producer(SharedStack *s) {
+void *producer(void *s) {
+  SharedStack *p = (SharedStack *)s;
   pthread_t tid = pthread_self();
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 35; i++) {
     int value = random() % 100;
-    ss_push(s, value);
+    ss_push(p, value);
     printf("[producer %lu]: put value %d, stack size %lu \n", tid, value,
-           s->size);
+           p->size);
     usleep(100000);
   }
   pthread_exit(NULL);
@@ -35,10 +36,11 @@ int main(void) {
 #endif
 
   SharedStack s;
-  ss_init_stack(&s, 0);
+  ss_init_stack(&s, 5);
 
   pthread_t producer_id, worker1_id, worker2_id, worker3_id;
   pthread_create(&producer_id, NULL, producer, (void *)&s);
+  sleep(1);
 
   pthread_create(&worker1_id, NULL, work, (void *)&s);
   pthread_create(&worker2_id, NULL, work, (void *)&s);

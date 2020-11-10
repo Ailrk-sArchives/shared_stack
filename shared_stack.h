@@ -6,12 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 typedef struct {
   Stack stack;
   pthread_mutex_t mutex;
-  pthread_mutex_t full_lock;
-  pthread_mutex_t empty_lock;
+  pthread_cond_t full_cv;
+  pthread_cond_t empty_cv;
   long capacity; // upperbound
   size_t size;   // current elements in stack
 } SharedStack;
