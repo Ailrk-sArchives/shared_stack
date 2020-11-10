@@ -10,18 +10,27 @@ CFLAGS += -Wno-ignored-qualifiers
 CFLAGS += -I. -pthread
 
 DEPS =
-SRC = test.c shared_stack.c systack.c
+SRC = shared_stack.c systack.c
 OBJS = ${SRC:.c=.o}
 
 .PHONY: clean test
 
-test: $(OBJS)
+all: $(OBJS)
+	$(CC) $(OBJS) -fPIC -shared -o shared_stack.so $(CFLAGS)
+
+static: $(OBJS)
+	$(CC) $(OBJS) -c $^ $(CFLAGS)
+	ar rcs ./shared_stack.a $^
+
+test: $(OBJS) test.c
 	$(CC) $(OBJS) -o $@ $(CFLAGS)
+	./test
 
 $(OBJS): $(SRC) $(DEPS)
 	$(CC) -c $^ $(CFLAGS)
 
 clean:
 	@rm ./*.o -f
-	@rm ./temp -rf
+	@rm ./*.so -f
+	@rm ./*.out
 	@rm test
