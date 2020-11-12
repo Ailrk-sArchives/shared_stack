@@ -22,7 +22,7 @@ static: $(OBJS)
 	$(CC) $(OBJS) -c $^ $(CFLAGS)
 	ar rcs ./shared_stack.a $^
 
-test: $(OBJS) test.c
+test: test.c $(OBJS)
 	$(CC) $(OBJS) -o $@ $(CFLAGS)
 	./test
 
